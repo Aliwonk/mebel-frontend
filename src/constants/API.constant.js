@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://api.mebelmodnostilno/api";
+const BACKEND_URL = "https://api.mebelmodnostilno.ru/api";
 const BACKEND_API = {
     PRODUCT: {
         GET_ONE: `${BACKEND_URL}/product`,
