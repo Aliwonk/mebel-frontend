@@ -1,0 +1,39 @@
+/* Глобальные стили */
+:root {
+  font-family: "Inter", sans-serif;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Зеленые var */
+  --app-green-50: #f0fdf4;
+  --app-green-100: #dcfce7;
+  --app-green-200: #bbf7d0;
+  --app-green-300: #86efac;
+  --app-green-400: #4ade80;
+  --app-green-500: #22c55e;
+  --app-green-600: #16a34a;
+  --app-green-700: #15803d;
+  --app-green-800: #166534;
+  --app-green-900: #14532d;
+
+  /* Синие var */
+  --app-blue-50: #eff6ff;
+  --app-blue-100: #dbeafe;
+  --app-blue-200: #bfdbfe;
+  --app-blue-300: #93c5fd;
+  --app-blue-400: #60a5fa;
+  --app-blue-500: #3b82f6;
+  --app-blue-600: #2563eb;
+  --app-blue-700: #1d4ed8;
+  --app-blue-800: #1e40af;
+  --app-blue-900: #1e3a8a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

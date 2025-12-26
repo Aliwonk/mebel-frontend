@@ -1,0 +1,544 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Супер Пупер Кресло 2",
+      "price": "120.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T15:08:04.036Z",
+      "updatedAt": "2025-12-19T15:08:04.036Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 1,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T15:08:04.072Z",
+          "updatedAt": "2025-12-19T15:08:04.072Z",
+          "product_id": 1
+        }
+      ],
+      "images": [
+        {
+          "id": 2,
+          "url": "http://localhost:3000/api/product/image/62450389f924e81124315dae5e3fa78c_1766158106627_4pw66hvrrcc.jpg",
+          "size": 14276,
+          "color_id": null,
+          "createdAt": "2025-12-19T15:28:26.702Z",
+          "updatedAt": "2025-12-19T15:28:26.702Z",
+          "product_id": 1
+        },
+        {
+          "id": 1,
+          "url": "http://localhost:3000/api/product/image/62450389f924e81124315dae5e3fa78c_1766158106624_goaikqp3o0i.png",
+          "size": 194191,
+          "color_id": null,
+          "createdAt": "2025-12-19T15:28:26.702Z",
+          "updatedAt": "2025-12-19T15:28:26.702Z",
+          "product_id": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Супер Кресло",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:53:43.680Z",
+      "updatedAt": "2025-12-19T16:53:43.680Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 2,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:53:43.703Z",
+          "updatedAt": "2025-12-19T16:53:43.703Z",
+          "product_id": 2
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 5,
+      "name": "Супер Кресло 1",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:06.001Z",
+      "updatedAt": "2025-12-19T16:54:06.001Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 3,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:06.005Z",
+          "updatedAt": "2025-12-19T16:54:06.005Z",
+          "product_id": 5
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 6,
+      "name": "Супер Кресло 12",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:10.419Z",
+      "updatedAt": "2025-12-19T16:54:10.419Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 4,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:10.422Z",
+          "updatedAt": "2025-12-19T16:54:10.422Z",
+          "product_id": 6
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 7,
+      "name": "Супер Кресло й12",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:13.307Z",
+      "updatedAt": "2025-12-19T16:54:13.307Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 5,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:13.310Z",
+          "updatedAt": "2025-12-19T16:54:13.310Z",
+          "product_id": 7
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 8,
+      "name": "Супер Кресло й132",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:22.709Z",
+      "updatedAt": "2025-12-19T16:54:22.709Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 6,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:22.713Z",
+          "updatedAt": "2025-12-19T16:54:22.713Z",
+          "product_id": 8
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 9,
+      "name": "Супер Кресло й1332",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:25.668Z",
+      "updatedAt": "2025-12-19T16:54:25.668Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 7,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:25.671Z",
+          "updatedAt": "2025-12-19T16:54:25.671Z",
+          "product_id": 9
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 10,
+      "name": "Супер Кресло й13232",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:28.245Z",
+      "updatedAt": "2025-12-19T16:54:28.245Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 8,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:28.247Z",
+          "updatedAt": "2025-12-19T16:54:28.247Z",
+          "product_id": 10
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 11,
+      "name": "Супер Кресло й132432",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:30.314Z",
+      "updatedAt": "2025-12-19T16:54:30.314Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 9,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:30.316Z",
+          "updatedAt": "2025-12-19T16:54:30.316Z",
+          "product_id": 11
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 12,
+      "name": "Супер Кресло 23ый132432",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:41.436Z",
+      "updatedAt": "2025-12-19T16:54:41.436Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 10,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:41.440Z",
+          "updatedAt": "2025-12-19T16:54:41.440Z",
+          "product_id": 12
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 13,
+      "name": "Супер Кресло 23ы132432",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:45.799Z",
+      "updatedAt": "2025-12-19T16:54:45.799Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 11,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:45.800Z",
+          "updatedAt": "2025-12-19T16:54:45.800Z",
+          "product_id": 13
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 14,
+      "name": "Супер Кресло 23ы1232432",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-19T16:54:56.018Z",
+      "updatedAt": "2025-12-19T16:54:56.018Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 12,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-19T16:54:56.023Z",
+          "updatedAt": "2025-12-19T16:54:56.023Z",
+          "product_id": 14
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 16,
+      "name": "Супер Кресло 23ы12324232",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-20T17:29:04.316Z",
+      "updatedAt": "2025-12-20T17:29:04.316Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 13,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-20T17:29:04.322Z",
+          "updatedAt": "2025-12-20T17:29:04.322Z",
+          "product_id": 16
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": 17,
+      "name": "Супер Кресло 23ы123224232",
+      "price": "12000.12",
+      "quantity": 5,
+      "createdAt": "2025-12-20T17:29:42.760Z",
+      "updatedAt": "2025-12-20T17:29:42.760Z",
+      "categories": [
+        {
+          "id": 1,
+          "name": "Игровое кресло",
+          "createdAt": "2025-12-19T15:08:03.971Z",
+          "updatedAt": "2025-12-19T15:08:03.971Z"
+        }
+      ],
+      "manufacturers": [
+        {
+          "id": 1,
+          "name": "Супер Пупер Кресло 2",
+          "createdAt": "2025-12-19T15:08:04.004Z",
+          "updatedAt": "2025-12-19T15:08:04.004Z"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": 14,
+          "length": 0,
+          "width": 1900,
+          "weight": 0,
+          "depth": 200,
+          "createdAt": "2025-12-20T17:29:42.765Z",
+          "updatedAt": "2025-12-20T17:29:42.765Z",
+          "product_id": 17
+        }
+      ],
+      "images": []
+    }
+  ],
+  "count": 14,
+  "page": 1,
+  "totalPages": 2
+}
