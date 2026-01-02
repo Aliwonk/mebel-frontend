@@ -6,4 +6,8 @@ const headerStore = reactive({
     search: null
 });
 
-export { headerStore }
+const telegramStore = reactive({
+    webApp: null
+})
+
+export { headerStore, telegramStore }

@@ -224,9 +224,9 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 60px;
-  z-index: 1000;
-  position: fixed;
+  height: 6vh;
+  /* z-index: 1000; */
+  /* position: fixed; */
   padding: 5px 20px;
   background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

@@ -1,68 +1,25 @@
 <template>
   <Loader v-if="productsLoading" />
-  <DataView
-    v-else
-    style="padding-top: 4.5rem"
-    :value="filteredProducts"
-    layout="grid"
-    :paginator="filteredProducts.length > 0"
-    :rows="rows"
-  >
-    <!-- <template #header>
-      <div class="filters-container">
-        <div class="filter-group">
-          <label>Каталог:</label>
-          <Select
-            v-model="selectedCatalog"
-            :options="catalogOptions"
-            optionLabel="name"
-            placeholder="Все каталоги"
-            @change="onFilterChange"
+  <div class="card" v-else>
+    <DataView
+      :value="filteredProducts"
+      layout="grid"
+      class="dataview"
+      :paginator="filteredProducts.length > 0"
+      :rows="rows"
+    >
+      <template #empty>Товары отсутствуют</template>
+      <template #grid="slotProps">
+        <div class="item-grid">
+          <ProductCard
+            v-for="(product, index) in slotProps.items"
+            :key="index"
+            :product_data="product"
           />
         </div>
-
-        <div class="filter-group">
-          <label>Категория:</label>
-          <Select
-            v-model="selectedCategory"
-            :options="categoryOptions"
-            optionLabel="name"
-            placeholder="Все категории"
-            @change="onFilterChange"
-          />
-        </div>
-
-        <div class="filter-group">
-          <label>Сортировка:</label>
-          <Select
-            v-model="sortOption"
-            :options="sortOptions"
-            optionLabel="label"
-            placeholder="Сортировка"
-            @change="onSortChange"
-          />
-        </div>
-
-        <Button
-          v-if="hasActiveFilters"
-          label="Сбросить фильтры"
-          @click="resetFilters"
-          severity="secondary"
-          size="small"
-        />
-      </div>
-    </template> -->
-    <template #empty>Товары отсутствуют</template>
-    <template #grid="slotProps">
-      <div class="item-grid">
-        <ProductCard
-          v-for="(product, index) in slotProps.items"
-          :key="index"
-          :product_data="product"
-        />
-      </div>
-    </template>
-  </DataView>
+      </template>
+    </DataView>
+  </div>
 </template>
 
 <script setup>
@@ -106,9 +63,7 @@ const loadProducts = async (
       );
     }
     if (search) {
-      response = await fetch(
-        `${BACKEND_API.PRODUCT.GET_ALL}?search=${search}`
-      );
+      response = await fetch(`${BACKEND_API.PRODUCT.GET_ALL}?search=${search}`);
     }
     const result = await response.json();
 
@@ -210,27 +165,16 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.filters-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: flex-end;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+.card {
+  width: 100%;
+  height: 94vh;
 }
 
-.filter-group {
+.dataview {
   display: flex;
   flex-direction: column;
-  min-width: 200px;
-}
-
-.filter-group label {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #495057;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .item-grid {
@@ -241,6 +185,7 @@ onBeforeUnmount(() => {
     minmax(clamp(14rem, 22vw, 18rem), 1fr)
   );
   width: 100%;
+  height: 100%;
   max-width: 1700px;
   margin: 0 auto;
   padding: clamp(0.2rem, 2vw, 2rem);
