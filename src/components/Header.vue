@@ -16,7 +16,6 @@
             @click="
               () => {
                 headerStore.search = searchQuery;
-                console.log(searchQuery);
               }
             "
           />
@@ -62,17 +61,6 @@
           <p class="mt-3">Загрузка каталога...</p>
         </div>
         <div v-else class="catalog-container">
-          <!-- <div class="catalog-search mb-4">
-            <span class="p-input-icon-left w-full">
-              <i class="pi pi-search" />
-              <InputText
-                v-model="searchQuery"
-                placeholder="Поиск по каталогу..."
-                class="w-full"
-              />
-            </span>
-          </div> -->
-
           <div class="catalog-menu">
             <Accordion :activeIndex="expandedIndex" @tab-change="onTabChange">
               <AccordionTab
@@ -88,10 +76,6 @@
                     @click="selectCategory(category)"
                   >
                     <div class="category-content">
-                      <!-- <i
-                        class="pi pi-minus mr-2"
-                        style="color: #4caf50; margin-right: 10px"
-                      ></i> -->
                       <span>{{ category.name }}</span>
                     </div>
                     <i class="pi pi-circle-fill" style="font-size: 8px"></i>
@@ -107,23 +91,32 @@
               </AccordionTab>
             </Accordion>
           </div>
-
-          <!-- <div class="catalog-stats mt-4 p-3">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="font-semibold m-0">Всего каталогов: {{ 0 }}</p>
-                <p class="text-sm text-gray-500 m-0 mt-1">
-                  Категорий: {{ totalCategories }}
-                </p>
-              </div>
-              <Button
-                label="Смотреть всё"
-                icon="pi pi-list"
-                size="small"
-                outlined
-              />
+        </div>
+      </template>
+      <template #footer>
+        <div class="drawer-footer">
+          <div class="phones">
+            <div class="item-phone">
+              <i class="pi pi-phone"></i>
+              <p>+7 901 200 1783</p>
             </div>
-          </div> -->
+          </div>
+          <Button
+            icon="pi pi-info-circle"
+            label="Информация о магазине"
+            style="
+              color: black;
+              background-color: transparent;
+              border: none;
+              /* box-shadow: none; */
+            "
+            @click="
+              () => {
+                visibleDrawer = false;
+                router.push({ name: 'Store' });
+              }
+            "
+          />
         </div>
       </template>
     </Drawer>
@@ -134,7 +127,9 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { BACKEND_API } from "../constants/API.constant";
 import { headerStore } from "../store/store";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const visibleDrawer = ref(false);
 const loadingData = ref(false);
 const expandedIndex = ref(0);
@@ -224,9 +219,9 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 6vh;
-  /* z-index: 1000; */
-  /* position: fixed; */
+  height: 7vh;
+  z-index: 1000;
+  position: fixed;
   padding: 5px 20px;
   background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -240,7 +235,7 @@ onMounted(() => {
 }
 
 .header-left :deep(.p-inputtext) {
-  border-radius: 20px 0 0 20px !important;
+  border-radius: 15px 0 0 15px !important;
   border: 1px solid #e0e0e0;
   padding: 0.75rem 1.25rem;
 }
@@ -338,6 +333,10 @@ onMounted(() => {
   background: #f5f5f5 !important;
 }
 
+:deep(.p-accordionheader-toggle-icon) {
+  transform: rotate(180deg);
+}
+
 :deep(.p-accordion .p-accordion-content) {
   border: none !important;
   background: white !important;
@@ -401,6 +400,30 @@ onMounted(() => {
 /* Анимация для плавного открытия */
 :deep(.p-drawer-right) {
   animation: slideInRight 0.3s ease;
+}
+
+.drawer-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phones {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+}
+
+.item-phone {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+.item-phone > i {
+  margin-right: 10px;
 }
 
 @keyframes slideInRight {
