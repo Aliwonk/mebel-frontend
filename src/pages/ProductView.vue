@@ -150,9 +150,9 @@
                 />
 
                 <!-- Номер изображения -->
-                <div class="image-counter">
+                <!-- <div class="image-counter">
                   {{ activeIndex + 1 }} / {{ product_images.length }}
-                </div>
+                </div> -->
               </div>
             </template>
 
@@ -300,6 +300,7 @@ const loading = ref(true);
 const activeIndex = ref(0);
 
 const changeImage = (index) => {
+  console.log(index);
   activeIndex.value = index;
 };
 
@@ -342,7 +343,7 @@ onMounted(async () => {
   width: 100%;
   height: 60px;
   z-index: 1000;
-  position: fixed;
+  position: absolute;
   padding-top: 7px;
   padding-left: 15px;
   padding-right: 15px;
