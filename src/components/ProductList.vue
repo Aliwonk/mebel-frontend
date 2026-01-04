@@ -39,22 +39,12 @@ const selectedCatalog = ref(null);
 const selectedCategory = ref(null);
 const sortOption = ref(null);
 
-// Опции для сортировки
-const sortOptions = ref([
-  { label: "По умолчанию", value: null },
-  { label: "Цена по возрастанию", value: "price_asc" },
-  { label: "Цена по убыванию", value: "price_desc" },
-  { label: "Название А-Я", value: "name_asc" },
-  { label: "Название Я-А", value: "name_desc" },
-  { label: "Дата добавления (новые)", value: "date_desc" },
-  { label: "Дата добавления (старые)", value: "date_asc" },
-]);
-
 // Загрузка продуктов
 const loadProducts = async (
   { filter, search } = { filter: null, search: null }
 ) => {
   productsLoading.value = true;
+  console.log(search);
   try {
     let response = await fetch(`${BACKEND_API.PRODUCT.GET_ALL}?all=true`);
     if (filter) {
@@ -101,35 +91,6 @@ const filteredProducts = computed(() => {
       )
     );
   }
-
-  // Сортировка
-  if (sortOption.value) {
-    result.sort((a, b) => {
-      switch (sortOption.value) {
-        case "price_asc":
-          return parseFloat(a.price) - parseFloat(b.price);
-
-        case "price_desc":
-          return parseFloat(b.price) - parseFloat(a.price);
-
-        case "name_asc":
-          return a.name.localeCompare(b.name);
-
-        case "name_desc":
-          return b.name.localeCompare(a.name);
-
-        case "date_desc":
-          return new Date(b.createdAt) - new Date(a.createdAt);
-
-        case "date_asc":
-          return new Date(a.createdAt) - new Date(b.createdAt);
-
-        default:
-          return 0;
-      }
-    });
-  }
-
   return result;
 });
 
