@@ -63,7 +63,6 @@
         <div v-else class="catalog-container">
           <div class="catalog-menu">
             <Accordion :activeIndex="expandedIndex" @tab-change="onTabChange">
-              <Button label="Сбросить фильтры" />
               <AccordionTab
                 v-for="catalog in filteredMenuItems"
                 :key="catalog.id"
@@ -196,7 +195,7 @@ function onTabChange(event) {
 
 function selectCategory(category) {
   window.localStorage.setItem(
-    "filter",
+    "product_filter",
     JSON.stringify({
       filter: "category_id",
       id: category.id,

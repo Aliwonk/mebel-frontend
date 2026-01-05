@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="productsLoading" />
   <div class="card" v-else>
-    <div v-if="activeFilters.length > 0" class="active-filters">
+    <div v-if="activeFilters.length > 0 && filteredProducts.length > 0" class="active-filters">
       <div class="filters-header">
         <span class="filters-title"
           >Активный фильтр: <Chip :label="activeFilters[0].label"
@@ -67,13 +67,11 @@ const products = ref([]);
 const productsLoading = ref(false);
 const rows = ref(40);
 
-// Фильтры
 const filter = ref(null);
 const searchQuery = ref("");
 const selectedCatalog = ref(null);
 const selectedCategory = ref(null);
 
-// Список активных фильтров для отображения
 const activeFilters = computed(() => {
   const filters = [];
 
@@ -150,7 +148,6 @@ const loadProducts = async (filters = {}) => {
       products.value = result.data;
       rows.value = result.count;
 
-      // Сохраняем фильтры в localStorage для восстановления при перезагрузке
       if (Object.keys(filters).length > 0) {
         saveFiltersToLocalStorage(filters);
       }
@@ -162,7 +159,6 @@ const loadProducts = async (filters = {}) => {
   }
 };
 
-// Сохранение фильтров в localStorage
 const saveFiltersToLocalStorage = (filters) => {
   const savedFilters = {
     filter: filters.filter || null,
@@ -171,12 +167,12 @@ const saveFiltersToLocalStorage = (filters) => {
     categoryId: filters.categoryId || null,
     timestamp: new Date().getTime(),
   };
-  localStorage.setItem("productFilters", JSON.stringify(savedFilters));
+  localStorage.setItem("product_filter", JSON.stringify(savedFilters));
 };
 
 // Загрузка фильтров из localStorage
 const loadFiltersFromLocalStorage = async () => {
-  const savedFilters = localStorage.getItem("productFilters");
+  const savedFilters = localStorage.getItem("product_filter");
   if (savedFilters) {
     try {
       const filters = JSON.parse(savedFilters);
@@ -184,7 +180,7 @@ const loadFiltersFromLocalStorage = async () => {
 
       // Очищаем старые фильтры (старше 1 часа)
       if (now - filters.timestamp > 3600000) {
-        localStorage.removeItem("productFilters");
+        localStorage.removeItem("product_filter");
         return;
       }
 
@@ -207,63 +203,29 @@ const loadFiltersFromLocalStorage = async () => {
     } catch (error) {
       console.error("Ошибка загрузки фильтров из localStorage:", error);
     }
+  } else {
+    await loadProducts();
   }
 };
 
-// Отфильтрованные продукты
 const filteredProducts = computed(() => {
   return [...products.value];
 });
 
-// Удаление конкретного фильтра
-const removeFilter = async (filterType) => {
-  switch (filterType) {
-    case "filter":
-      filter.value = null;
-      headerStore.filter = null;
-      break;
-    case "search":
-      searchQuery.value = "";
-      headerStore.search = "";
-      break;
-    case "catalog":
-      selectedCatalog.value = null;
-      break;
-    case "category":
-      selectedCategory.value = null;
-      break;
-  }
-
-  // Загружаем продукты с обновленными фильтрами
-  await loadProducts({
-    filter: filter.value,
-    search: searchQuery.value,
-    catalogId: selectedCatalog.value,
-    categoryId: selectedCategory.value,
-  });
-};
-
-// Сброс всех фильтров
 const resetAllFilters = async () => {
-  // Сбрасываем все фильтры
   filter.value = null;
   searchQuery.value = "";
   selectedCatalog.value = null;
   selectedCategory.value = null;
 
-  // Сбрасываем в store
   headerStore.filter = null;
   headerStore.search = "";
 
-  // Очищаем localStorage
-  localStorage.removeItem("productFilters");
-  localStorage.removeItem("filter");
+  localStorage.removeItem("product_filter");
 
-  // Загружаем все продукты
   await loadProducts();
 };
 
-// Отслеживание изменений фильтров из headerStore
 watch(
   () => headerStore.filter,
   async (value) => {
@@ -300,11 +262,7 @@ onMounted(async () => {
   updateRows();
   headerStore.hide = false;
   window.addEventListener("resize", updateRows);
-
-  // Пытаемся загрузить сохраненные фильтры, иначе загружаем все
-  await loadFiltersFromLocalStorage().catch(async () => {
-    await loadProducts();
-  });
+  await loadFiltersFromLocalStorage();
 });
 
 onBeforeUnmount(() => {
