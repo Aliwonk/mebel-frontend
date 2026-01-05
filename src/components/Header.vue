@@ -63,6 +63,7 @@
         <div v-else class="catalog-container">
           <div class="catalog-menu">
             <Accordion :activeIndex="expandedIndex" @tab-change="onTabChange">
+              <Button label="Сбросить фильтры" />
               <AccordionTab
                 v-for="catalog in filteredMenuItems"
                 :key="catalog.id"
@@ -137,6 +138,8 @@ const searchQuery = ref("");
 const catalogs = ref([]);
 
 async function onShowDraw() {
+  const localFilter = JSON.parse(window.localStorage.getItem("filter"));
+  console.log(localFilter);
   if (catalogs.value.length === 0) {
     await loadOptions();
   }
@@ -187,18 +190,19 @@ const filteredMenuItems = computed(() => {
     .filter(Boolean);
 });
 
-const totalCategories = computed(() => {
-  return catalogs.value.reduce(
-    (total, catalog) => total + (catalog.categories?.length || 0),
-    0
-  );
-});
-
 function onTabChange(event) {
   expandedIndex.value = event.index;
 }
 
 function selectCategory(category) {
+  window.localStorage.setItem(
+    "filter",
+    JSON.stringify({
+      filter: "category_id",
+      id: category.id,
+      name: category.name,
+    })
+  );
   headerStore.filter = {
     filter: "category_id",
     id: category.id,
@@ -219,7 +223,7 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 7vh;
+  height: 9vh;
   z-index: 1000;
   position: fixed;
   padding: 5px 20px;
@@ -245,22 +249,6 @@ onMounted(() => {
   background: white;
   border: 1px solid #e0e0e0;
   border-left: none;
-}
-
-:deep(.custom-drawer) {
-  width: 350px !important;
-  background: #f8f9fa !important;
-}
-
-:deep(.custom-drawer .p-drawer-header) {
-  padding: 1.5rem !important;
-  background: white !important;
-  border-bottom: 1px solid #eaeaea !important;
-}
-
-:deep(.custom-drawer .p-drawer-content) {
-  background: #f8f9fa !important;
-  padding: 0 !important;
 }
 
 .drawer-header {
@@ -305,7 +293,7 @@ onMounted(() => {
 }
 
 :deep(.p-accordionheader) {
-  padding: 15px;
+  padding: 10px 20px;
 }
 
 :deep(.p-accordion .p-accordion-header) {
@@ -342,6 +330,10 @@ onMounted(() => {
   background: white !important;
   padding: 0 !important;
   border-radius: 0 0 8px 8px !important;
+}
+
+.p-drawer-header {
+  padding: 0px;
 }
 
 .catalog-content {

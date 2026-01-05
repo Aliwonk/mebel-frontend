@@ -2,7 +2,7 @@ import { reactive } from "vue";
 
 const headerStore = reactive({
     hide: false,
-    filter: null,
+    filter: window.localStorage.getItem("filter") ? JSON.parse(window.localStorage.getItem("filter")) : null,
     search: null
 });
 

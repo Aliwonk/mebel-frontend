@@ -127,7 +127,7 @@
             :numVisible="1"
             :showThumbnails="false"
             :showIndicators="true"
-            :showItemNavigators="true"
+            :showItemNavigators="product_images.length > 1"
             :changeItemOnIndicatorHover="true"
             :circular="true"
             :autoPlay="true"
@@ -482,6 +482,10 @@ onMounted(async () => {
   color: transparent !important;
   width: 40px !important;
   height: 40px !important;
+}
+
+:deep(.p-galleria-indicator-list) {
+  display: none;
 }
 
 /* Скрыть стандартные навигационные кнопки */
