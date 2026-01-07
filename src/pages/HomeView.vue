@@ -10,7 +10,7 @@ import ProductList from "../components/ProductList.vue";
 
 <style scoped>
 .container {
-  padding-top: 9.3vh;
+  padding-top: 8.3vh;
   background-color: white;
 }
 </style>

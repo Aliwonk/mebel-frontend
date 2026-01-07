@@ -1,7 +1,12 @@
 <template>
-  <Loader v-if="productsLoading" />
+  <div v-if="productsLoading" class="card">
+    <Loader />
+  </div>
   <div class="card" v-else>
-    <div v-if="activeFilters.length > 0 && filteredProducts.length > 0" class="active-filters">
+    <div
+      v-if="activeFilters.length > 0 && filteredProducts.length > 0"
+      class="active-filters"
+    >
       <div class="filters-header">
         <span class="filters-title"
           >Активный фильтр: <Chip :label="activeFilters[0].label"
@@ -307,11 +312,6 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.filters-title::before {
-  content: "🎯";
-  font-size: 1.2rem;
 }
 
 .filters-chips {
