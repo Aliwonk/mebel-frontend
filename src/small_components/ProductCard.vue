@@ -43,6 +43,7 @@
             variant="outlined"
             severity="info"
             class="card-button"
+            style="border-color: #7d5440; color: #7d5440;"
             icon="pi pi-eye"
             @click="
               router.push({

@@ -17,7 +17,15 @@ const BACKEND_API = {
         }
     },
     STORE: {
-
+        PHONE: {
+            GET_ALL: `${BACKEND_URL}/store/phone/all`
+        },
+        EMAIL: {
+            GET_ALL: `${BACKEND_URL}/store/email/all`
+        },
+        ADDRESS: {
+            GET_ALL: `${BACKEND_URL}/store/address/all`,
+        }
     }
 };
 

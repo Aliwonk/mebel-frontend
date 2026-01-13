@@ -95,21 +95,20 @@
       </template>
       <template #footer>
         <div class="drawer-footer">
-          <div class="phones">
-            <div class="item-phone">
+          <div class="contacts">
+            <div v-if="mainPhone" class="item-contact">
               <i class="pi pi-phone"></i>
-              <p>+7 901 200 1783</p>
+              <p>+{{ mainPhone.phone }}</p>
+            </div>
+            <div v-if="mainEmail" class="item-contact">
+              <i class="pi pi-envelope"></i>
+              <p>{{ mainEmail.email }}</p>
             </div>
           </div>
           <Button
             icon="pi pi-info-circle"
             label="Информация о магазине"
-            style="
-              color: black;
-              background-color: transparent;
-              border: none;
-              /* box-shadow: none; */
-            "
+            style="color: black; background-color: transparent; border: none"
             @click="
               () => {
                 visibleDrawer = false;
@@ -123,6 +122,7 @@
   </header>
 </template>
 
+<
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { BACKEND_API } from "../constants/API.constant";
@@ -135,6 +135,10 @@ const loadingData = ref(false);
 const expandedIndex = ref(0);
 const searchQuery = ref("");
 const catalogs = ref([]);
+const phones = ref([]);
+const emails = ref([]);
+const mainPhone = ref(null);
+const mainEmail = ref(null);
 
 async function onShowDraw() {
   const localFilter = JSON.parse(window.localStorage.getItem("filter"));
@@ -142,6 +146,8 @@ async function onShowDraw() {
   if (catalogs.value.length === 0) {
     await loadOptions();
   }
+  // Загружаем контакты при открытии drawer
+  await loadContacts();
 }
 
 async function loadOptions() {
@@ -160,6 +166,61 @@ async function loadOptions() {
   } finally {
     loadingData.value = false;
   }
+}
+
+// Функция для получения телефонов и email
+async function loadContacts() {
+  try {
+    // Загружаем телефоны
+    const phoneResponse = await fetch(BACKEND_API.STORE.PHONE.GET_ALL);
+    const phoneResult = await phoneResponse.json();
+
+    if (phoneResponse.ok && phoneResult.data) {
+      phones.value = phoneResult.data;
+      // Находим телефон с isMain === true
+      mainPhone.value =
+        phoneResult.data.find((phone) => phone.isMain === true) || null;
+    }
+
+    // Загружаем email
+    const emailResponse = await fetch(BACKEND_API.STORE.EMAIL.GET_ALL);
+    const emailResult = await emailResponse.json();
+
+    if (emailResponse.ok && emailResult.data) {
+      emails.value = emailResult.data;
+      // Находим email с isMain === true
+      mainEmail.value =
+        emailResult.data.find((email) => email.isMain === true) || null;
+    }
+  } catch (error) {
+    console.error("Произошла ошибка при загрузке контактов: ", error);
+  }
+}
+
+// Функция для получения основного телефона (публичная, если нужна из других компонентов)
+function getMainPhone() {
+  return mainPhone.value;
+}
+
+// Функция для получения основного email (публичная, если нужна из других компонентов)
+function getMainEmail() {
+  return mainEmail.value;
+}
+
+// Функция для получения всех телефонов с фильтрацией по isMain
+function getAllPhones(onlyMain = false) {
+  if (onlyMain) {
+    return phones.value.filter((phone) => phone.isMain === true);
+  }
+  return phones.value;
+}
+
+// Функция для получения всех email с фильтрацией по isMain
+function getAllEmails(onlyMain = false) {
+  if (onlyMain) {
+    return emails.value.filter((email) => email.isMain === true);
+  }
+  return emails.value;
 }
 
 const filteredMenuItems = computed(() => {
@@ -212,6 +273,17 @@ function selectCategory(category) {
 
 onMounted(() => {
   loadOptions();
+  // Загружаем контакты при монтировании компонента
+  loadContacts();
+});
+
+// Экспортируем функции для использования в других компонентах
+defineExpose({
+  getMainPhone,
+  getMainEmail,
+  getAllPhones,
+  getAllEmails,
+  loadContacts,
 });
 </script>
 
@@ -226,7 +298,8 @@ onMounted(() => {
   z-index: 1000;
   position: fixed;
   padding: 5px 20px;
-  background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
+  /* background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%); */
+  background: #7d5440;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -459,5 +532,42 @@ onMounted(() => {
 
 .catalog-menu::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+.drawer-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.item-contact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.item-contact > i {
+  margin-right: 10px;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .item-contact {
+    font-size: 1rem;
+  }
+
+  .item-contact > i {
+    font-size: 1rem;
+  }
 }
 </style>
