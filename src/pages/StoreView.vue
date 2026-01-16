@@ -331,7 +331,7 @@ function openSocial(network) {
 }
 
 .contact-category {
-  /* background: #f8f9fa; */
+  background: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #e9ecef;
@@ -365,10 +365,10 @@ function openSocial(network) {
   transform: translateY(-2px);
 } */
 
-/* .contact-item.main-contact {
-  border-left: 4px solid #3f51b5;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-} */
+.contact-item.main-contact {
+  /* border-left: 4px solid #3f51b5; */
+  background: linear-gradient(135deg, #f8f9ff 0%, #fffcf0 100%);
+}
 
 .contact-info {
   display: flex;
