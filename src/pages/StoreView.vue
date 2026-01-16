@@ -262,7 +262,7 @@ function openSocial(network) {
 <style scoped>
 .store-page {
   min-height: 100vh;
-  /* background: linear-gradient(135deg, #f5f7fa 0%, #ffeaca 100%); */
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffeaca 100%);
   padding: 20px;
 }
 
