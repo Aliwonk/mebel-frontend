@@ -45,7 +45,7 @@
                   <div class="contact-info">
                     <i class="pi pi-phone contact-icon"></i>
                     <span class="contact-value">+{{ phone.phone }}</span>
-                    <span v-if="phone.isMain" class="main-badge">Основной</span>
+                    <!-- <span v-if="phone.isMain" class="main-badge">Основной</span> -->
                   </div>
                   <div v-if="phone.description" class="contact-description">
                     {{ phone.description }}
@@ -67,7 +67,7 @@
                   <div class="contact-info">
                     <i class="pi pi-envelope contact-icon"></i>
                     <span class="contact-value">{{ email.email }}</span>
-                    <span v-if="email.isMain" class="main-badge">Основной</span>
+                    <!-- <span v-if="email.isMain" class="main-badge">Основной</span> -->
                   </div>
                   <div v-if="email.description" class="contact-description">
                     {{ email.description }}
@@ -262,7 +262,7 @@ function openSocial(network) {
 <style scoped>
 .store-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #ffeaca 100%); */
   padding: 20px;
 }
 
@@ -309,7 +309,7 @@ function openSocial(network) {
   display: flex;
   align-items: center;
   font-size: 1.25rem;
-  color: #3f51b5;
+  color: black;
   font-weight: 600;
 }
 
@@ -331,7 +331,7 @@ function openSocial(network) {
 }
 
 .contact-category {
-  background: #f8f9fa;
+  /* background: #f8f9fa; */
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #e9ecef;
@@ -342,7 +342,7 @@ function openSocial(network) {
   margin-bottom: 15px;
   font-size: 1.1rem;
   color: #495057;
-  border-bottom: 2px solid #3f51b5;
+  /* border-bottom: 2px solid #3f51b5; */
   padding-bottom: 8px;
 }
 
@@ -365,10 +365,10 @@ function openSocial(network) {
   transform: translateY(-2px);
 } */
 
-.contact-item.main-contact {
+/* .contact-item.main-contact {
   border-left: 4px solid #3f51b5;
   background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-}
+} */
 
 .contact-info {
   display: flex;
@@ -378,7 +378,7 @@ function openSocial(network) {
 
 .contact-icon {
   margin-right: 10px;
-  color: #3f51b5;
+  color: black;
   font-size: 1.1rem;
 }
 
@@ -424,7 +424,7 @@ function openSocial(network) {
 
 .address-icon {
   margin-right: 15px;
-  color: #3f51b5;
+  color: black;
   font-size: 1.2rem;
   margin-top: 2px;
 }
@@ -468,7 +468,7 @@ function openSocial(network) {
 
 .about-icon {
   margin-right: 15px;
-  color: #3f51b5;
+  color: black;
   font-size: 1.3rem;
   margin-top: 2px;
 }

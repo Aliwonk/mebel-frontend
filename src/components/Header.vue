@@ -78,7 +78,7 @@
                     <div class="category-content">
                       <span>{{ category.name }}</span>
                     </div>
-                    <i class="pi pi-circle-fill" style="font-size: 8px"></i>
+                    <!-- <i class="pi pi-circle-fill" style="font-size: 8px"></i> -->
                   </div>
                   <div
                     v-if="catalog.categories.length === 0"
@@ -420,7 +420,12 @@ defineExpose({
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
-  border-left: 3px solid #3f51b5;
+  background-color: #7d5440;
+  /* border-left: 3px solid #3f51b5; */
+  /* border-bottom: #333 solid 1px; */
+  /* border: 0.5px solid #7d5440; */
+  /* border-radius: 5px; */
+  margin-bottom: 5px;
   padding-left: 10px;
 }
 
@@ -437,7 +442,7 @@ defineExpose({
 
 .category-item span {
   font-size: 0.95rem;
-  color: #333;
+  color: white;
 }
 
 .no-categories {
@@ -557,17 +562,17 @@ defineExpose({
 }
 
 .item-contact > i {
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 /* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
   .item-contact {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .item-contact > i {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 </style>
