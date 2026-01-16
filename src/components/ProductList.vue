@@ -8,17 +8,22 @@
       class="active-filters"
     >
       <div class="filters-header">
-        <span class="filters-title"
-          >Активный фильтр: <Chip :label="activeFilters[0].label"
-        /></span>
-        <Button
-          label="Сбросить"
-          icon="pi pi-times"
-          style="margin-top: 10px"
-          size="small"
-          severity="secondary"
-          @click="resetAllFilters"
-        />
+        <span class="filters-title">Активный фильтр:</span>
+        <div class="filters-content">
+          <Button
+            label="Сбросить"
+            icon="pi pi-times"
+            size="small"
+            style="
+              margin-right: 10px;
+              border-color: rgb(125, 84, 64);
+              color: rgb(125, 84, 64);
+            "
+            severity="secondary"
+            @click="resetAllFilters"
+          />
+          <Chip :label="activeFilters[0].label" />
+        </div>
       </div>
     </div>
 
@@ -292,12 +297,12 @@ onBeforeUnmount(() => {
 
 /* Стили для блока активных фильтров */
 .active-filters {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  color: black;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .filters-header {
@@ -312,6 +317,12 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.filters-content {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .filters-chips {

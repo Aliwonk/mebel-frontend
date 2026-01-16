@@ -62,7 +62,7 @@
         </div>
         <div v-else class="catalog-container">
           <div class="catalog-menu">
-            <Accordion :activeIndex="expandedIndex" @tab-change="onTabChange">
+            <Accordion :activeIndex="expandedIndex" @tab-open="onTabChange">
               <AccordionTab
                 v-for="catalog in filteredMenuItems"
                 :key="catalog.id"
@@ -141,12 +141,10 @@ const mainPhone = ref(null);
 const mainEmail = ref(null);
 
 async function onShowDraw() {
-  const localFilter = JSON.parse(window.localStorage.getItem("filter"));
-  console.log(localFilter);
+  const localFilter = JSON.parse(window.localStorage.getItem("product_filter"));
   if (catalogs.value.length === 0) {
     await loadOptions();
   }
-  // Загружаем контакты при открытии drawer
   await loadContacts();
 }
 
@@ -273,11 +271,9 @@ function selectCategory(category) {
 
 onMounted(() => {
   loadOptions();
-  // Загружаем контакты при монтировании компонента
   loadContacts();
 });
 
-// Экспортируем функции для использования в других компонентах
 defineExpose({
   getMainPhone,
   getMainEmail,
