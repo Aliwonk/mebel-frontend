@@ -88,7 +88,7 @@ const paginatedProducts = ref({
 const productsLoading = ref(false);
 
 // Пагинация
-const rowsPerPage = ref(3); // Значение по умолчанию. Количество элементов на страницу
+const rowsPerPage = ref(10); // Значение по умолчанию. Количество элементов на страницу
 const currentPage = ref(1);
 const firstRecordIndex = ref(0);
 
