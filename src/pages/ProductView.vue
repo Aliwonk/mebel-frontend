@@ -5,12 +5,7 @@
         icon="pi pi-angle-double-left"
         size="medium"
         raised
-        @click="
-          () => {
-            headerStore.hide = false;
-            router.push({ name: 'Home' });
-          }
-        "
+        @click="goBack"
       />
     </div>
   </header>
@@ -21,26 +16,7 @@
         <!-- Скелетон для галереи -->
         <template #header>
           <div class="gallery-skeleton">
-            <!-- Основное изображение -->
             <Skeleton width="100%" height="400px" style="border-radius: 8px" />
-
-            <!-- Индикаторы загрузки -->
-            <!-- <div class="indicators-skeleton">
-              <div v-for="i in 4" :key="i" class="indicator-skeleton">
-                <Skeleton width="10px" height="10px" shape="circle" />
-              </div>
-            </div> -->
-
-            <!-- Кнопки навигации -->
-            <!-- <div class="navigation-skeleton">
-              <Skeleton
-                width="40px"
-                height="40px"
-                shape="circle"
-                style="margin-right: 10px"
-              />
-              <Skeleton width="40px" height="40px" shape="circle" />
-            </div> -->
           </div>
         </template>
 
@@ -120,65 +96,67 @@
     <!-- Основной контент после загрузки -->
     <Card v-else class="card" style="padding: 10px">
       <template #header>
-        <!-- Галерея с навигацией поверх изображения -->
+        <!-- Оптимизированная галерея -->
         <div v-if="product_images.length > 0" class="gallery-container">
-          <Galleria
-            :value="product_images"
-            :numVisible="1"
-            :showThumbnails="false"
-            :showIndicators="true"
-            :showItemNavigators="product_images.length > 1"
-            :changeItemOnIndicatorHover="true"
-            :circular="true"
-            :autoPlay="true"
-            :transitionInterval="3000"
-            containerStyle="width: 100%; max-width: 640px; margin: 0 auto; position: relative;"
-            :pt="{
-              root: { class: 'custom-galleria' },
-              indicators: { class: 'custom-indicators' },
-              indicatorButton: { class: 'custom-indicator-button' },
-              itemWrapper: { class: 'custom-item-wrapper' },
-              item: { class: 'custom-item' },
-            }"
-          >
-            <template #item="slotProps">
-              <div class="image-container">
-                <img
-                  :src="slotProps.item.url"
-                  :alt="slotProps.item.alt"
-                  class="galleria-image"
-                />
-
-                <!-- Номер изображения -->
-                <!-- <div class="image-counter">
-                  {{ activeIndex + 1 }} / {{ product_images.length }}
-                </div> -->
+          <!-- Основное изображение -->
+          <div class="main-image-container">
+            <div class="image-wrapper">
+              <img
+                v-if="loadedImages.has(currentIndex)"
+                :src="product_images[currentIndex].url"
+                :alt="`${product_data.name} - вид ${currentIndex + 1}`"
+                class="main-image"
+                @load="onMainImageLoad"
+              />
+              <div v-else class="image-loader">
+                <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
               </div>
-            </template>
+            </div>
 
-            <!-- Кастомные стрелки -->
-            <template #previousitemicon>
-              <div class="custom-nav-button prev">
-                <i class="pi pi-chevron-left"></i>
-              </div>
-            </template>
-            <template #nextitemicon>
-              <div class="custom-nav-button next">
-                <i class="pi pi-chevron-right"></i>
-              </div>
-            </template>
+            <!-- Навигационные кнопки -->
+            <button
+              v-if="product_images.length > 1"
+              class="nav-button prev"
+              @click="prevImage"
+              :disabled="!loadedImages.has(prevIndex)"
+            >
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            <button
+              v-if="product_images.length > 1"
+              class="nav-button next"
+              @click="nextImage"
+              :disabled="!loadedImages.has(nextIndex)"
+            >
+              <i class="pi pi-chevron-right"></i>
+            </button>
 
-            <!-- Кастомные индикаторы -->
-            <template #indicator="slotProps">
-              <div
-                :class="[
-                  'custom-dot',
-                  { 'custom-dot-active': slotProps.index === activeIndex },
-                ]"
-                @click="changeImage(slotProps.index)"
-              ></div>
-            </template>
-          </Galleria>
+            <!-- Индикатор -->
+            <div v-if="product_images.length > 1" class="image-indicator">
+              {{ currentIndex + 1 }} / {{ product_images.length }}
+            </div>
+          </div>
+
+          <!-- Миниатюры -->
+          <div v-if="product_images.length > 1" class="thumbnails-container">
+            <div
+              v-for="(img, index) in product_images"
+              :key="img.id"
+              :class="['thumbnail-wrapper', { active: index === currentIndex }]"
+              @click="changeImage(index)"
+            >
+              <div class="thumbnail-loader" v-if="!loadedImages.has(index)">
+                <div class="skeleton-thumbnail"></div>
+              </div>
+              <img
+                v-else
+                :src="img.url"
+                :alt="`Миниатюра ${index + 1}`"
+                class="thumbnail"
+                loading="lazy"
+              />
+            </div>
+          </div>
         </div>
 
         <!-- Если нет изображений -->
@@ -187,32 +165,28 @@
           <p>Нет изображений</p>
         </div>
       </template>
+
       <template #title>{{ product_data.name }}</template>
       <template #subtitle="slotProps">
         <Tag
-          v-if="
-            product_data.categories &&
-            product_data.categories[0].catalogs &&
-            product_data.categories[0].catalogs.length > 0
-          "
+          v-if="product_data.categories?.[0]?.catalogs?.[0]"
           severity="secondary"
           style="margin-right: 5px; margin-bottom: 5px"
           :value="product_data.categories[0].catalogs[0].name"
         />
         <Tag
-          v-if="product_data.categories && product_data.categories.length > 0"
+          v-if="product_data.categories?.[0]"
           severity="secondary"
           style="margin-right: 5px; margin-bottom: 5px"
           :value="product_data.categories[0].name"
         />
         <Tag
-          v-if="
-            product_data.manufacturers && product_data.manufacturers.length > 0
-          "
+          v-if="product_data.manufacturers?.[0]"
           severity="secondary"
           :value="product_data.manufacturers[0].name"
         />
       </template>
+
       <template #content>
         <div class="content-items">
           <div class="content-item">
@@ -221,8 +195,8 @@
               <p style="font-weight: 600">
                 {{
                   product_data.price
-                    ? product_data.price + " руб"
-                    : `Отсутствует`
+                    ? `${product_data.price} руб`
+                    : "Отсутствует"
                 }}
               </p>
             </div>
@@ -230,25 +204,18 @@
           <div class="content-item">
             <h5 class="item-caption">Описание</h5>
             <div class="item-body">
-              <p>
-                {{
-                  product_data.description
-                    ? product_data.description
-                    : `Отсутствует`
-                }}
-              </p>
+              <p>{{ product_data.description || "Отсутствует" }}</p>
             </div>
           </div>
           <div class="content-item">
             <h5 class="item-caption">Характеристики</h5>
-            <div class="item-body">
+            <div class="item-body" v-if="product_data.dimensions?.[0]">
               <div class="spec-item">
                 <span class="spec-name">Ширина:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].width }} мм</span
                 >
               </div>
-
               <div class="spec-item">
                 <span class="spec-name">Высота:</span>
                 <span class="spec-value"
@@ -282,44 +249,120 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted, onUnmounted, computed } from "vue";
-import Galleria from "primevue/galleria";
-import Skeleton from "primevue/skeleton";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { headerStore } from "../store/store";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import Tag from "primevue/tag";
+import Skeleton from "primevue/skeleton";
 import { BACKEND_API } from "../constants/API.constant";
 
 const route = useRoute();
 const router = useRouter();
+
+// Реактивные данные
 const product_data = ref({});
 const product_images = ref([]);
 const loading = ref(true);
-const activeIndex = ref(0);
+const currentIndex = ref(0);
+const loadedImages = ref(new Set());
+const imageCache = new Map(); // Кэш для загруженных изображений
+
+// Вычисляемые свойства
+const prevIndex = computed(() =>
+  currentIndex.value > 0
+    ? currentIndex.value - 1
+    : product_images.value.length - 1,
+);
+const nextIndex = computed(() =>
+  currentIndex.value < product_images.value.length - 1
+    ? currentIndex.value + 1
+    : 0,
+);
+
+// Методы
+const goBack = () => {
+  headerStore.hide = false;
+  router.push({ name: "Home" });
+};
+
+const loadImage = (index) => {
+  if (index < 0 || index >= product_images.value.length) return;
+
+  const imgUrl = product_images.value[index].url;
+
+  // Если изображение уже в кэше
+  if (imageCache.has(imgUrl)) {
+    loadedImages.value.add(index);
+    return;
+  }
+
+  // Загружаем изображение
+  const img = new Image();
+  img.onload = () => {
+    imageCache.set(imgUrl, img);
+    loadedImages.value.add(index);
+  };
+  img.onerror = () => {
+    console.error(`Failed to load image: ${imgUrl}`);
+  };
+  img.src = imgUrl;
+};
+
+const preloadNeighbors = () => {
+  const indices = [prevIndex.value, currentIndex.value, nextIndex.value];
+  indices.forEach(loadImage);
+};
 
 const changeImage = (index) => {
-  console.log(index);
-  activeIndex.value = index;
+  if (index === currentIndex.value || !loadedImages.value.has(index)) return;
+  currentIndex.value = index;
+  preloadNeighbors();
+};
+
+const prevImage = () => {
+  if (loadedImages.value.has(prevIndex.value)) {
+    currentIndex.value = prevIndex.value;
+    preloadNeighbors();
+  }
+};
+
+const nextImage = () => {
+  if (loadedImages.value.has(nextIndex.value)) {
+    currentIndex.value = nextIndex.value;
+    preloadNeighbors();
+  }
+};
+
+const onMainImageLoad = () => {
+  // Можно добавить логику после загрузки основного изображения
 };
 
 const loadProduct = async (id) => {
   loading.value = true;
-  try {
-    // Имитация задержки загрузки
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  loadedImages.value.clear();
+  imageCache.clear();
 
+  try {
+    // Убираем искусственную задержку для реальной работы
     const response = await fetch(`${BACKEND_API.PRODUCT.GET_ONE}/${id}`);
     const result = await response.json();
 
     if (response.ok) {
       product_data.value = result.data;
       product_images.value =
-        result.data.images && result.data.images.length > 0
-          ? result.data.images
-          : [];
+        result.data.images?.length > 0 ? result.data.images : [];
       document.title = result.data.name;
+
+      // Предзагрузка первого изображения и его соседей
+      if (product_images.value.length > 0) {
+        loadImage(0);
+        if (product_images.value.length > 1) {
+          loadImage(1);
+          loadImage(product_images.value.length - 1);
+        }
+      }
     }
   } catch (error) {
     console.error("Ошибка загрузки товара:", error);
@@ -328,10 +371,61 @@ const loadProduct = async (id) => {
   }
 };
 
+// Клавиатурная навигация
+const handleKeyDown = (e) => {
+  if (product_images.value.length <= 1) return;
+
+  switch (e.key) {
+    case "ArrowLeft":
+      e.preventDefault();
+      prevImage();
+      break;
+    case "ArrowRight":
+      e.preventDefault();
+      nextImage();
+      break;
+  }
+};
+
+// Автоматическое переключение (опционально)
+let autoPlayInterval = null;
+const startAutoPlay = () => {
+  if (product_images.value.length <= 1) return;
+  autoPlayInterval = setInterval(() => {
+    nextImage();
+  }, 5000);
+};
+
+const stopAutoPlay = () => {
+  if (autoPlayInterval) {
+    clearInterval(autoPlayInterval);
+    autoPlayInterval = null;
+  }
+};
+
+// Хуки жизненного цикла
 onMounted(async () => {
   headerStore.hide = true;
   await loadProduct(route.params.id);
+  document.addEventListener("keydown", handleKeyDown);
+  startAutoPlay();
 });
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeyDown);
+  stopAutoPlay();
+  headerStore.hide = false;
+});
+
+// Отслеживание изменений роута
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (newId) {
+      await loadProduct(newId);
+    }
+  },
+);
 </script>
 
 <style scoped>
@@ -362,6 +456,7 @@ onMounted(async () => {
   flex-direction: column;
   width: 100%;
   height: fit-content;
+  min-height: 100vh;
 }
 
 /* Стили для галереи */
@@ -369,128 +464,165 @@ onMounted(async () => {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  position: relative;
 }
 
-.image-container {
+.main-image-container {
   position: relative;
   width: 100%;
   height: 400px;
   overflow: hidden;
-  border-radius: 8px;
-  background-color: #f5f5f5;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  margin-bottom: 16px;
 }
 
-.galleria-image {
+.image-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transition: opacity 0.3s ease;
 }
 
-.image-counter {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* Кастомные стили для Galleria */
-:deep(.custom-galleria) {
-  position: relative;
-}
-
-:deep(.custom-item-wrapper) {
-  position: relative;
-}
-
-:deep(.custom-indicators) {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
+.image-loader {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
-  z-index: 10;
+  width: 100%;
+  height: 100%;
+  color: #6c757d;
 }
 
-.custom-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.custom-dot:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-  transform: scale(1.2);
-}
-
-.custom-dot-active {
-  background-color: white;
-  transform: scale(1.2);
-}
-
-.custom-nav-button {
+.nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
   background: rgba(255, 255, 255, 0.9);
+  border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 
-.custom-nav-button:hover {
+.nav-button:hover:not(:disabled) {
   background: white;
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.custom-nav-button.prev {
-  left: 15px;
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.custom-nav-button.next {
-  right: 15px;
+.nav-button.prev {
+  left: 16px;
 }
 
-.custom-nav-button i {
+.nav-button.next {
+  right: 16px;
+}
+
+.nav-button i {
   font-size: 1.2rem;
   color: #333;
 }
 
-:deep(.p-galleria-item-nav) {
-  background: transparent !important;
+.image-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-:deep(.p-galleria-item-prev, .p-galleria-item-next) {
-  color: transparent !important;
-  width: 40px !important;
-  height: 40px !important;
+/* Миниатюры */
+.thumbnails-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 0;
+  justify-content: center;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
 }
 
-:deep(.p-galleria-indicator-list) {
-  display: none;
+.thumbnails-container::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* Скрыть стандартные навигационные кнопки */
-:deep(.p-galleria-item-prev-icon, .p-galleria-item-next-icon) {
-  display: none !important;
+.thumbnails-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.thumbnail-wrapper {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.thumbnail-wrapper:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.thumbnail-wrapper.active {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.thumbnail-loader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+}
+
+.skeleton-thumbnail {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .no-image {
@@ -499,9 +631,14 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   height: 400px;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   border-radius: 12px;
-  color: #999;
+  color: #6c757d;
+  gap: 16px;
+}
+
+.no-image i {
+  font-size: 4rem;
 }
 
 .content-items {
@@ -514,19 +651,19 @@ onMounted(async () => {
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 12px;
-  color: #333;
+  color: #212529;
 }
 
 .item-body {
   line-height: 1.6;
-  color: #555;
+  color: #495057;
 }
 
 .spec-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .spec-item:last-child {
@@ -535,11 +672,11 @@ onMounted(async () => {
 
 .spec-name {
   font-weight: 500;
-  color: #666;
+  color: #6c757d;
 }
 
 .spec-value {
-  color: #333;
+  color: #212529;
   font-weight: 400;
 }
 
@@ -561,32 +698,6 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
 }
 
-.indicators-skeleton {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.indicator-skeleton {
-  width: 10px;
-  height: 10px;
-}
-
-.navigation-skeleton {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  transform: translateY(-50%);
-}
-
 .title-skeleton {
   margin-bottom: 2rem;
 }
@@ -605,13 +716,6 @@ onMounted(async () => {
   margin-bottom: 2.5rem;
 }
 
-/* Анимация для скелетона */
-:deep(.p-skeleton) {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
 @keyframes loading {
   0% {
     background-position: 200% 0;
@@ -621,102 +725,82 @@ onMounted(async () => {
   }
 }
 
+/* Карточка */
+.card {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
-  .image-container {
-    height: 300px;
+  .main-image-container {
+    height: 350px;
   }
 
-  .image-counter {
-    top: 10px;
-    right: 10px;
-    padding: 4px 10px;
-    font-size: 0.8rem;
-  }
-
-  .custom-nav-button {
+  .nav-button {
     width: 36px;
     height: 36px;
   }
 
-  .custom-nav-button.prev {
-    left: 10px;
+  .nav-button.prev {
+    left: 12px;
   }
 
-  .custom-nav-button.next {
-    right: 10px;
+  .nav-button.next {
+    right: 12px;
   }
 
-  .custom-nav-button i {
+  .thumbnail-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .image-indicator {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-image-container {
+    height: 300px;
+  }
+
+  .nav-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-button i {
     font-size: 1rem;
   }
 
-  .custom-dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  .gallery-skeleton :deep(.p-skeleton) {
-    height: 300px !important;
+  .thumbnail-wrapper {
+    width: 60px;
+    height: 60px;
   }
 
   .content-items {
     grid-row-gap: 20px;
   }
-}
 
-@media (max-width: 480px) {
-  .image-container {
-    height: 400px;
-  }
-
-  .image-counter {
-    top: 8px;
-    right: 8px;
-    padding: 3px 8px;
-    font-size: 0.75rem;
-  }
-
-  .custom-nav-button {
-    width: 32px;
-    height: 32px;
-  }
-
-  .custom-nav-button.prev {
-    left: 8px;
-  }
-
-  .custom-nav-button.next {
-    right: 8px;
-  }
-
-  .gallery-skeleton :deep(.p-skeleton) {
-    height: 250px !important;
-  }
-
-  .tags-skeleton :deep(.p-skeleton) {
-    width: 80px !important;
-    margin-right: 8px !important;
-  }
-
-  .tags-skeleton :deep(.p-skeleton):last-child {
-    width: 100px !important;
+  .item-caption {
+    font-size: 1rem;
   }
 }
 
-/* Гарантия одинаковых размеров для карточки и скелетона */
-.card {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
+/* Плавные переходы */
+.main-image {
+  will-change: opacity;
 }
 
-.skeleton-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
+.thumbnail-wrapper {
+  will-change: transform, border-color;
 }
 </style>

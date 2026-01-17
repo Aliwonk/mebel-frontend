@@ -3,15 +3,22 @@
     <Loader />
   </div>
   <div class="card" v-else>
-    <div
-      v-if="activeFilters.length > 0 && filteredProducts.length > 0"
-      class="active-filters"
+    <DataView
+      :value="paginatedProducts.data"
+      layout="grid"
+      class="dataview"
+      :paginator="paginatedProducts.totalPages > 1"
+      :rows="rowsPerPage"
+      :first="firstRecordIndex"
+      :totalRecords="paginatedProducts.count"
+      @page="onPageChange"
+      :lazy="true"
     >
-      <div class="filters-header">
-        <span class="filters-title">Активный фильтр:</span>
-        <div class="filters-content">
+      <template #header v-if="activeFilters.length > 0">
+        <div class="pagination-info">
+          <span>Фильтры: {{ activeFilters[0].label }} </span>
           <Button
-            label="Сбросить"
+            label="Сбросить все фильтры"
             icon="pi pi-times"
             size="small"
             style="
@@ -22,18 +29,9 @@
             severity="secondary"
             @click="resetAllFilters"
           />
-          <Chip :label="activeFilters[0].label" />
         </div>
-      </div>
-    </div>
+      </template>
 
-    <DataView
-      :value="filteredProducts"
-      layout="grid"
-      class="dataview"
-      :paginator="filteredProducts.length > 0"
-      :rows="rows"
-    >
       <template #empty>
         <div class="empty-state">
           <i class="pi pi-inbox empty-icon"></i>
@@ -51,14 +49,20 @@
         </div>
       </template>
 
-      <template #grid="slotProps">
+      <template #grid>
         <div class="item-grid">
           <ProductCard
-            v-for="(product, index) in slotProps.items"
-            :key="index"
+            v-for="(product, index) in paginatedProducts.data"
+            :key="product.id || index"
             :product_data="product"
           />
         </div>
+      </template>
+
+      <template #paginatorstart v-if="paginatedProducts.data.length > 0">
+        <span class="pagination-text">
+          Страница {{ currentPage }} из {{ paginatedProducts.totalPages }}
+        </span>
       </template>
     </DataView>
   </div>
@@ -67,21 +71,34 @@
 <script setup>
 import DataView from "primevue/dataview";
 import Chip from "primevue/chip";
+import Dropdown from "primevue/dropdown";
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import ProductCard from "../small_components/ProductCard.vue";
 import Loader from "../small_components/Loader.vue";
 import { BACKEND_API } from "../constants/API.constant";
 import { headerStore } from "../store/store";
 
-const products = ref([]);
+// Основные переменные состояния
+const paginatedProducts = ref({
+  data: [],
+  count: 0,
+  page: 1,
+  totalPages: 1,
+});
 const productsLoading = ref(false);
-const rows = ref(40);
 
+// Пагинация
+const rowsPerPage = ref(3); // Значение по умолчанию. Количество элементов на страницу
+const currentPage = ref(1);
+const firstRecordIndex = ref(0);
+
+// Фильтры
 const filter = ref(null);
 const searchQuery = ref("");
 const selectedCatalog = ref(null);
 const selectedCategory = ref(null);
 
+// Вычисляемые свойства
 const activeFilters = computed(() => {
   const filters = [];
 
@@ -90,6 +107,7 @@ const activeFilters = computed(() => {
       type: "filter",
       label: filter.value.name,
       icon: "pi pi-tag",
+      value: filter.value,
     });
   }
 
@@ -98,83 +116,102 @@ const activeFilters = computed(() => {
       type: "search",
       label: `Поиск: "${searchQuery.value}"`,
       icon: "pi pi-search",
+      value: searchQuery.value,
     });
   }
 
   if (selectedCatalog.value) {
-    // Здесь нужно получить название каталога по его ID
     filters.push({
       type: "catalog",
       label: `Каталог: #${selectedCatalog.value}`,
       icon: "pi pi-folder",
+      value: selectedCatalog.value,
     });
   }
 
   if (selectedCategory.value) {
-    // Здесь нужно получить название категории по ее ID
     filters.push({
       type: "category",
       label: `Категория: #${selectedCategory.value}`,
       icon: "pi pi-bookmark",
+      value: selectedCategory.value,
     });
   }
 
   return filters;
 });
 
-// Загрузка продуктов с поддержкой множественных фильтров
-const loadProducts = async (filters = {}) => {
+// Загрузка продуктов с серверной пагинацией
+const loadProducts = async (
+  page = currentPage.value,
+  limit = rowsPerPage.value,
+) => {
   productsLoading.value = true;
 
   try {
-    let url = `${BACKEND_API.PRODUCT.GET_ALL}?all=true`;
-    const params = [];
+    let url = `${BACKEND_API.PRODUCT.GET_ALL}`;
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-    // Добавляем все активные фильтры в параметры запроса
-    if (filters.filter) {
-      params.push(`${filters.filter.filter}=${filters.filter.id}`);
+    // Добавляем фильтры
+    if (filter.value) {
+      params.append(`${filter.value.filter}`, filter.value.id);
     }
 
-    if (filters.search) {
-      params.push(`search=${encodeURIComponent(filters.search)}`);
+    if (searchQuery.value) {
+      params.append("search", searchQuery.value);
     }
 
-    if (filters.catalogId) {
-      params.push(`catalog=${filters.catalogId}`);
+    if (selectedCatalog.value) {
+      params.append("catalog", selectedCatalog.value);
     }
 
-    if (filters.categoryId) {
-      params.push(`category=${filters.categoryId}`);
+    if (selectedCategory.value) {
+      params.append("category", selectedCategory.value);
     }
 
-    if (params.length > 0) {
-      url += `&${params.join("&")}`;
+    const response = await fetch(`${url}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const response = await fetch(url);
     const result = await response.json();
 
-    if (response.ok) {
-      products.value = result.data;
-      rows.value = result.count;
+    if (result.data) {
+      paginatedProducts.value = {
+        data: result.data,
+        count: result.count || result.data.length,
+        page: result.page || page,
+        totalPages:
+          result.totalPages ||
+          Math.ceil((result.count || result.data.length) / limit),
+      };
 
-      if (Object.keys(filters).length > 0) {
-        saveFiltersToLocalStorage(filters);
-      }
+      currentPage.value = result.page || page;
+      firstRecordIndex.value = (currentPage.value - 1) * rowsPerPage.value;
+
+      saveFiltersToLocalStorage();
     }
   } catch (error) {
     console.error("Ошибка загрузки продуктов:", error);
+    // Можно добавить уведомление об ошибке
   } finally {
     productsLoading.value = false;
   }
 };
 
-const saveFiltersToLocalStorage = (filters) => {
+// Сохранение фильтров в localStorage
+const saveFiltersToLocalStorage = () => {
   const savedFilters = {
-    filter: filters.filter || null,
-    search: filters.search || "",
-    catalogId: filters.catalogId || null,
-    categoryId: filters.categoryId || null,
+    filter: filter.value || null,
+    search: searchQuery.value || "",
+    catalogId: selectedCatalog.value || null,
+    categoryId: selectedCategory.value || null,
+    rowsPerPage: rowsPerPage.value,
+    page: currentPage.value,
     timestamp: new Date().getTime(),
   };
   localStorage.setItem("product_filter", JSON.stringify(savedFilters));
@@ -191,10 +228,11 @@ const loadFiltersFromLocalStorage = async () => {
       // Очищаем старые фильтры (старше 1 часа)
       if (now - filters.timestamp > 3600000) {
         localStorage.removeItem("product_filter");
+        await loadProducts();
         return;
       }
 
-      // Применяем сохраненные фильтры
+      // Восстанавливаем фильтры
       if (filters.filter) {
         filter.value = filters.filter;
         headerStore.filter = filters.filter;
@@ -208,19 +246,34 @@ const loadFiltersFromLocalStorage = async () => {
       selectedCatalog.value = filters.catalogId;
       selectedCategory.value = filters.categoryId;
 
+      if (filters.rowsPerPage) {
+        rowsPerPage.value = filters.rowsPerPage;
+      }
+
+      if (filters.page) {
+        currentPage.value = filters.page;
+        firstRecordIndex.value = (filters.page - 1) * rowsPerPage.value;
+      }
+
+      await loadProducts();
+
       // Загружаем продукты с сохраненными фильтрами
-      await loadProducts(filters);
     } catch (error) {
       console.error("Ошибка загрузки фильтров из localStorage:", error);
+      await loadProducts();
     }
   } else {
     await loadProducts();
   }
 };
 
-const filteredProducts = computed(() => {
-  return [...products.value];
-});
+// Обработчики событий
+const onPageChange = (event) => {
+  const newPage = Math.floor(event.first / event.rows) + 1;
+  currentPage.value = newPage;
+  firstRecordIndex.value = event.first;
+  loadProducts(newPage, event.rows);
+};
 
 const resetAllFilters = async () => {
   filter.value = null;
@@ -231,52 +284,43 @@ const resetAllFilters = async () => {
   headerStore.filter = null;
   headerStore.search = "";
 
+  currentPage.value = 1;
+  firstRecordIndex.value = 0;
+
   localStorage.removeItem("product_filter");
 
-  await loadProducts();
+  await loadProducts(1, rowsPerPage.value);
 };
 
+// Отслеживание изменений фильтров в headerStore
 watch(
   () => headerStore.filter,
   async (value) => {
     filter.value = value;
-    await loadProducts({
-      filter: value,
-      search: searchQuery.value,
-      catalogId: selectedCatalog.value,
-      categoryId: selectedCategory.value,
-    });
-  }
+    currentPage.value = 1;
+    firstRecordIndex.value = 0;
+    await loadProducts(1, rowsPerPage.value);
+  },
 );
 
 watch(
   () => headerStore.search,
   async (value) => {
     searchQuery.value = value;
-    await loadProducts({
-      filter: filter.value,
-      search: value,
-      catalogId: selectedCatalog.value,
-      categoryId: selectedCategory.value,
-    });
-  }
+    currentPage.value = 1;
+    firstRecordIndex.value = 0;
+    await loadProducts(1, rowsPerPage.value);
+  },
 );
-
-// Адаптация количества строк
-const updateRows = () => {
-  rows.value = window.innerWidth <= 720 ? 14 : 30;
-};
 
 // Жизненный цикл
 onMounted(async () => {
-  updateRows();
   headerStore.hide = false;
-  window.addEventListener("resize", updateRows);
   await loadFiltersFromLocalStorage();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", updateRows);
+  // Очистка при необходимости
 });
 </script>
 
@@ -297,18 +341,16 @@ onBeforeUnmount(() => {
 
 /* Стили для блока активных фильтров */
 .active-filters {
-  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   color: black;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin: 1rem;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .filters-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .filters-title {
@@ -321,8 +363,9 @@ onBeforeUnmount(() => {
 
 .filters-content {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  margin-top: 10px;
+  gap: 0.5rem;
 }
 
 .filters-chips {
@@ -362,10 +405,39 @@ onBeforeUnmount(() => {
   border-left: 4px solid #8b5cf6;
 }
 
-:deep(.p-chip) {
-  border-radius: 5px;
-  font-size: smaller;
-  padding-block: 5px;
+/* Информация о пагинации в заголовке */
+.pagination-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.rows-per-page {
+  display: flex;
+  align-items: center;
+}
+
+.rows-per-page label {
+  margin-right: 0.5rem;
+}
+
+:deep(.p-paginator) {
+  padding: 1rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+:deep(.p-paginator-page) {
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+
+.pagination-text {
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0 1rem;
 }
 
 /* Стили для пустого состояния */
@@ -430,12 +502,16 @@ onBeforeUnmount(() => {
   .filters-chips {
     width: 100%;
   }
-}
 
-@media (max-width: 350px) {
-  .item-grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-    justify-items: center !important;
+  .pagination-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .rows-per-page {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 
@@ -443,6 +519,13 @@ onBeforeUnmount(() => {
   .item-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.4rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .item-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    justify-items: center !important;
   }
 }
 </style>
