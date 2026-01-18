@@ -20,6 +20,12 @@
       <template #subtitle>
         <div class="tags-row">
           <Tag
+            v-if="product_data.categories[0].catalogs.length > 0"
+            severity="secondary"
+            style="margin-right: 5px; margin-bottom: 5px"
+            :value="product_data.categories[0].catalogs[0].name"
+          />
+          <Tag
             v-if="product_data.categories.length > 0"
             severity="secondary"
             :value="product_data.categories[0].name"
