@@ -25,7 +25,10 @@
             :value="product_data.categories[0].name"
           />
           <Tag
-            v-if="product_data.manufacturers.length > 0"
+            v-if="
+              product_data.manufacturers.length > 0 &&
+              product_data.manufacturers[0].name !== 'Неизвестно'
+            "
             severity="secondary"
             :value="product_data.manufacturers[0].name"
           />
@@ -43,7 +46,7 @@
             variant="outlined"
             severity="info"
             class="card-button"
-            style="border-color: #7d5440; color: #7d5440;"
+            style="border-color: #7d5440; color: #7d5440"
             icon="pi pi-eye"
             @click="
               router.push({

@@ -181,7 +181,10 @@
           :value="product_data.categories[0].name"
         />
         <Tag
-          v-if="product_data.manufacturers?.[0]"
+          v-if="
+            product_data.manufacturers?.[0] &&
+            product_data.manufacturers[0].name !== 'Неизвестно'
+          "
           severity="secondary"
           :value="product_data.manufacturers[0].name"
         />
@@ -210,31 +213,31 @@
           <div class="content-item">
             <h5 class="item-caption">Характеристики</h5>
             <div class="item-body" v-if="product_data.dimensions?.[0]">
-              <div class="spec-item">
+              <div class="spec-item" v-if="product_data.dimensions[0].width > 0">
                 <span class="spec-name">Ширина:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].width }} мм</span
                 >
               </div>
-              <div class="spec-item">
+              <div class="spec-item" v-if="product_data.dimensions[0].height > 0">
                 <span class="spec-name">Высота:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].height }} мм</span
                 >
               </div>
-              <div class="spec-item">
+              <div class="spec-item" v-if="product_data.dimensions[0].length > 0">
                 <span class="spec-name">Длина:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].length }} мм</span
                 >
               </div>
-              <div class="spec-item">
+              <div class="spec-item" v-if="product_data.dimensions[0].depth > 0">
                 <span class="spec-name">Глубина:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].depth }} мм</span
                 >
               </div>
-              <div class="spec-item">
+              <div class="spec-item" v-if="product_data.dimensions[0].weight > 0">
                 <span class="spec-name">Вес:</span>
                 <span class="spec-value"
                   >{{ product_data.dimensions[0].weight }} кг</span
